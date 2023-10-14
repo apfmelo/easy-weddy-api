@@ -1,16 +1,14 @@
 FROM node:18.16.0-alpine
 
-WORKDIR /opt/
+WORKDIR /opt/app
 COPY ./package.json ./yarn.lock ./
 
 ENV PATH /opt/node_modules/.bin:$PATH
 RUN yarn config set network-timeout 600000 -g && yarn install --frozen-lockfile --unsafe-perm
-WORKDIR /opt/
-COPY ./ .
+COPY . .
 
-RUN yarn config set network-timeout 600000 -g && yarn install --frozen-lockfile --unsafe-perm
-RUN yarn npx tsc
+RUN yarn build --outDir ./dist
 
-EXPOSE 3001
+EXPOSE 8080
 
 CMD ["yarn", "start"]
