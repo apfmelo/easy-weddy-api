@@ -5,8 +5,7 @@ export function validateGuest (req: Request, res: Response, next: NextFunction )
     const requiredFields = ['email', 'isConfirmed', 'fianceId']
     const { data } = req.body;
 
-    const objKeys = Object.keys(data)
-    const {hasRequiredKeys, missingRequired} = verifyRequiredFields(objKeys, requiredFields)
+    const {hasRequiredKeys, missingRequired} = verifyRequiredFields(data, requiredFields)
     if (hasRequiredKeys){
         next()
     } else {
@@ -24,8 +23,7 @@ export function validateGuests (req: Request, res: Response, next: NextFunction 
 
     const missingFields: any[] = []
     data.forEach((item: any) => {
-        const objKeys = Object.keys(item)
-        const {hasRequiredKeys, missingRequired} = verifyRequiredFields(objKeys, requiredFields)
+        const { hasRequiredKeys, missingRequired } = verifyRequiredFields(item, requiredFields)
         if(!hasRequiredKeys) missingFields.push({item, missingRequired})
     })
     const hasRequiredKeys = missingFields.length === 0
@@ -39,7 +37,9 @@ export function validateGuests (req: Request, res: Response, next: NextFunction 
     }
 }
 
-const verifyRequiredFields = (objKeys: string[], requiredFields: string[]) => {
+export const verifyRequiredFields = (data: Record<string,string>, requiredFields: string[]) => {
+    const objKeys = Object.keys(data)
+
     const missingRequired = requiredFields.reduce(
         (missing: string[], key) => { 
             if (!objKeys.includes(key)) { 
@@ -50,5 +50,5 @@ const verifyRequiredFields = (objKeys: string[], requiredFields: string[]) => {
     );
     const hasRequiredKeys = missingRequired.length === 0;
 
-    return {hasRequiredKeys, missingRequired}
+    return { hasRequiredKeys, missingRequired }
 }
